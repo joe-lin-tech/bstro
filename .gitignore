@@ -38,6 +38,8 @@ output
 exps
 predictions
 demo
+EMDB2
+SLOPER4D
 
 # hidden folder for aml configs
 .azureml

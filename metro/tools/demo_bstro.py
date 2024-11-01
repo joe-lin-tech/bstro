@@ -90,7 +90,7 @@ def run_inference(args, BSTRO_model, smpl, mesh_sampler):
         
         visual_imgs, pred_contact_meshes = visualize_contact([img],
                                                             pred_contact.detach(), 
-                                                            smpl)
+                                                            smpl, args)
         visual_imgs = visual_imgs.transpose(0,1)
         visual_imgs = visual_imgs.transpose(1,2)
         visual_imgs = np.asarray(visual_imgs)
@@ -103,16 +103,16 @@ def run_inference(args, BSTRO_model, smpl, mesh_sampler):
             cv2.imwrite(temp_fname, np.asarray(visual_imgs[:,:,::-1]*255))
 
             for _, mesh in enumerate(pred_contact_meshes):
-                temp_fname = foldername + f'/contact_vis.obj'
+                temp_fname = foldername + f'/contact_vis.ply' # f'/contact_vis.obj'
                 mesh.export(temp_fname)
 
             print(f'results are visualized in {temp_fname}.')
-    return
+    return pred_contact, pred_contact_meshes
 
 
 def visualize_contact(images,
                     pred_contact, 
-                    smpl):
+                    smpl, args):
     ref_vert = smpl(torch.zeros((1, 72)).cuda(args.device), torch.zeros((1,10)).cuda(args.device)).squeeze()
     rend_imgs = []
     pred_contact_meshes = []
@@ -294,7 +294,7 @@ def main(args):
         raise ValueError("Invalid checkpoint {}".format(args.resume_checkpoint))
     
     _bstro_network.to(args.device)
-    run_inference(args, _bstro_network, smpl, mesh_sampler)
+    return run_inference(args, _bstro_network, smpl, mesh_sampler)
 
    
 
