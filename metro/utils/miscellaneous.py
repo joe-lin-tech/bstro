@@ -67,7 +67,7 @@ def freeze_weights(model, regexp):
     logger = logging.getLogger("maskrcnn_benchmark.trainer")
     for weight_name, weight in get_matching_parameters(model, regexp).items():
         weight.requires_grad = False
-        logger.info("Disabled training of {}".format(weight_name))
+        # logger.info("Disabled training of {}".format(weight_name))
 
 
 def unfreeze_weights(model, regexp, backbone_freeze_at=-1,
@@ -79,9 +79,9 @@ def unfreeze_weights(model, regexp, backbone_freeze_at=-1,
     logger = logging.getLogger("maskrcnn_benchmark.trainer")
     for weight_name, weight in get_matching_parameters(model, regexp).items():
         weight.requires_grad = True
-        logger.info("Enabled training of {}".format(weight_name))
+        # logger.info("Enabled training of {}".format(weight_name))
     if backbone_freeze_at >= 0:
-        logger.info("Freeze backbone at stage: {}".format(backbone_freeze_at))
+        # logger.info("Freeze backbone at stage: {}".format(backbone_freeze_at))
         if is_distributed:
             model.module.backbone.body._freeze_backbone(backbone_freeze_at)
         else:

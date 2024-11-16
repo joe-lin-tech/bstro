@@ -52,12 +52,12 @@ def save_checkpoint(model, args, epoch, iteration, num_trial=10):
             torch.save(model_to_save, op.join(checkpoint_dir, 'model.bin'))
             torch.save(model_to_save.state_dict(), op.join(checkpoint_dir, 'state_dict.bin'))
             torch.save(args, op.join(checkpoint_dir, 'training_args.bin'))
-            logger.info("Save checkpoint to {}".format(checkpoint_dir))
+            # logger.info("Save checkpoint to {}".format(checkpoint_dir))
             break
         except:
             pass
-    else:
-        logger.info("Failed to save checkpoint after {} trails.".format(num_trial))
+    # else:
+        # logger.info("Failed to save checkpoint after {} trails.".format(num_trial))
     return checkpoint_dir
 
 def adjust_learning_rate(optimizer, epoch, args):
@@ -149,11 +149,11 @@ def run(args, train_dataloader, val_dataloader, METRO_model, smpl, mesh_sampler)
             find_unused_parameters=True,
         )
 
-        logger.info(
-                ' '.join(
-                ['Local rank: {o}', 'Max iteration: {a}', 'iters_per_epoch: {b}','num_train_epochs: {c}',]
-                ).format(o=args.local_rank, a=max_iter, b=iters_per_epoch, c=args.num_train_epochs)
-            )
+        # logger.info(
+            #     ' '.join(
+            #     ['Local rank: {o}', 'Max iteration: {a}', 'iters_per_epoch: {b}','num_train_epochs: {c}',]
+            #     ).format(o=args.local_rank, a=max_iter, b=iters_per_epoch, c=args.num_train_epochs)
+            # )
 
     start_training_time = time.time()
     end = time.time()
@@ -207,15 +207,15 @@ def run(args, train_dataloader, val_dataloader, METRO_model, smpl, mesh_sampler)
         if iteration % args.logging_steps == 0 or iteration == max_iter:
             eta_seconds = batch_time.avg * (max_iter - iteration)
             eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
-            logger.info(
-                ' '.join(
-                ['eta: {eta}', 'epoch: {ep}', 'iter: {iter}', 'max mem : {memory:.0f}',]
-                ).format(eta=eta_string, ep=epoch, iter=iteration, 
-                    memory=torch.cuda.max_memory_allocated() / 1024.0 / 1024.0) 
-                + '  loss: {:.4f}, contact loss: {:.4f}, compute: {:.4f}, data: {:.4f}, lr: {:.6f}'.format(
-                    log_losses.avg, log_loss_contact.avg, batch_time.avg, data_time.avg, 
-                    optimizer.param_groups[0]['lr'])
-            )
+            # logger.info(
+            #     ' '.join(
+            #     ['eta: {eta}', 'epoch: {ep}', 'iter: {iter}', 'max mem : {memory:.0f}',]
+            #     ).format(eta=eta_string, ep=epoch, iter=iteration, 
+            #         memory=torch.cuda.max_memory_allocated() / 1024.0 / 1024.0) 
+            #     + '  loss: {:.4f}, contact loss: {:.4f}, compute: {:.4f}, data: {:.4f}, lr: {:.6f}'.format(
+            #         log_losses.avg, log_loss_contact.avg, batch_time.avg, data_time.avg, 
+            #         optimizer.param_groups[0]['lr'])
+            # )
 
             visual_imgs, pred_contact_meshes, gt_contact_meshes = visualize_contact(annotations['ori_img'].detach(),
                                                                                     annotations['contact'].detach(),
@@ -250,11 +250,11 @@ def run(args, train_dataloader, val_dataloader, METRO_model, smpl, mesh_sampler)
                                                                                                             smpl,
                                                                                                             mesh_sampler)
 
-            logger.info(
-                ' '.join(['Validation', 'epoch: {ep}',]).format(ep=epoch) 
-                + '  mPVE: {:6.2f}, Data Count: {:6.2f}, precision: {:6.4f}, recall: {:6.4f}, f1: {:6.4f}, fp_error: {:8.6f}, fn_error: {:8.5f},'.format(1000*val_mPVE, \
-                    val_count, val_precision, val_recall, val_f1, 100 * val_fp_error, 100 * val_fn_error)
-            )
+            # logger.info(
+            #     ' '.join(['Validation', 'epoch: {ep}',]).format(ep=epoch) 
+            #     + '  mPVE: {:6.2f}, Data Count: {:6.2f}, precision: {:6.4f}, recall: {:6.4f}, f1: {:6.4f}, fp_error: {:8.6f}, fn_error: {:8.5f},'.format(1000*val_mPVE, \
+            #         val_count, val_precision, val_recall, val_f1, 100 * val_fp_error, 100 * val_fn_error)
+            # )
 
             if val_f1 > log_eval_metrics.f1:
                 checkpoint_dir = save_checkpoint(METRO_model, args, epoch, iteration)
@@ -264,15 +264,15 @@ def run(args, train_dataloader, val_dataloader, METRO_model, smpl, mesh_sampler)
         
     total_training_time = time.time() - start_training_time
     total_time_str = str(datetime.timedelta(seconds=total_training_time))
-    logger.info('Total training time: {} ({:.4f} s / iter)'.format(
-        total_time_str, total_training_time / max_iter)
-    )
+    # logger.info('Total training time: {} ({:.4f} s / iter)'.format(
+    #     total_time_str, total_training_time / max_iter)
+    # )
     checkpoint_dir = save_checkpoint(METRO_model, args, epoch, iteration)
 
-    logger.info(
-        ' Best Results:'
-        + '  F1: {:6.3f}, at epoch {:6.2f}'.format(log_eval_metrics.f1, log_eval_metrics.epoch)
-    )
+    # logger.info(
+    #     ' Best Results:'
+    #     + '  F1: {:6.3f}, at epoch {:6.2f}'.format(log_eval_metrics.f1, log_eval_metrics.epoch)
+    # )
 
 
 def run_eval_general(args, val_dataloader, METRO_model, smpl, mesh_sampler):
@@ -291,11 +291,11 @@ def run_eval_general(args, val_dataloader, METRO_model, smpl, mesh_sampler):
                                                                                             smpl,
                                                                                             mesh_sampler)
 
-    logger.info(
-        ' '.join(['Validation', ])
-                + '  mPVE: {:6.2f}, Data Count: {:6.2f}, precision: {:6.4f}, recall: {:6.4f}, f1: {:6.4f}, fp_error: {:8.6f}, fn_error: {:8.5f},'.format(1000*val_mPVE, \
-                    val_count, val_precision, val_recall, val_f1, 100 * val_fp_error, 100 * val_fn_error)
-    )
+    # logger.info(
+    #     ' '.join(['Validation', ])
+    #             + '  mPVE: {:6.2f}, Data Count: {:6.2f}, precision: {:6.4f}, recall: {:6.4f}, f1: {:6.4f}, fp_error: {:8.6f}, fn_error: {:8.5f},'.format(1000*val_mPVE, \
+    #                 val_count, val_precision, val_recall, val_f1, 100 * val_fp_error, 100 * val_fn_error)
+    # )
     
     return
 
@@ -656,7 +656,7 @@ def main(args):
     mkdir(args.output_dir)
     logger = setup_logger("METRO", args.output_dir, get_rank())
     set_seed(args.seed, args.num_gpus)
-    logger.info("Using {} GPUs".format(args.num_gpus))
+    # logger.info("Using {} GPUs".format(args.num_gpus))
 
     # Mesh and SMPL utils
     smpl = SMPL().to(args.device)
@@ -672,7 +672,7 @@ def main(args):
     
     if args.run_eval_only==True and args.resume_checkpoint!=None and args.resume_checkpoint!='None' and 'state_dict' not in args.resume_checkpoint:
         # if only run eval, load checkpoint
-        logger.info("Evaluation: Loading from checkpoint {}".format(args.resume_checkpoint))
+        # logger.info("Evaluation: Loading from checkpoint {}".format(args.resume_checkpoint))
         _bstro_network = torch.load(args.resume_checkpoint)
     else:
         # init three transformer-encoder blocks in a loop
@@ -703,13 +703,13 @@ def main(args):
                 arg_param = getattr(args, param)
                 config_param = getattr(config, param)
                 if arg_param > 0 and arg_param != config_param:
-                    logger.info("Update config parameter {}: {} -> {}".format(param, config_param, arg_param))
+                    # logger.info("Update config parameter {}: {} -> {}".format(param, config_param, arg_param))
                     setattr(config, param, arg_param)
 
             # init a transformer encoder and append it to a list
             assert config.hidden_size % config.num_attention_heads == 0
             model = model_class(config=config) 
-            logger.info("Init model from scratch.")
+            # logger.info("Init model from scratch.")
             trans_encoder.append(model)
 
         
@@ -719,13 +719,13 @@ def main(args):
             hrnet_checkpoint = 'models/hrnet/hrnetv2_w40_imagenet_pretrained.pth'
             hrnet_update_config(hrnet_config, hrnet_yaml)
             backbone = get_cls_net(hrnet_config, pretrained=hrnet_checkpoint)
-            logger.info('=> loading hrnet-v2-w40 model')
+            # logger.info('=> loading hrnet-v2-w40 model')
         elif args.arch=='hrnet-w64':
             hrnet_yaml = 'models/hrnet/cls_hrnet_w64_sgd_lr5e-2_wd1e-4_bs32_x100.yaml'
             hrnet_checkpoint = 'models/hrnet/hrnetv2_w64_imagenet_pretrained.pth'
             hrnet_update_config(hrnet_config, hrnet_yaml)
             backbone = get_cls_net(hrnet_config, pretrained=hrnet_checkpoint)
-            logger.info('=> loading hrnet-v2-w64 model')
+            # logger.info('=> loading hrnet-v2-w64 model')
         else:
             print("=> using pre-trained model '{}'".format(args.arch))
             backbone = models.__dict__[args.arch](pretrained=True)
@@ -735,9 +735,9 @@ def main(args):
 
         trans_encoder = torch.nn.Sequential(*trans_encoder)
         total_params = sum(p.numel() for p in trans_encoder.parameters())
-        logger.info('Transformers total parameters: {}'.format(total_params))
+        # logger.info('Transformers total parameters: {}'.format(total_params))
         backbone_total_params = sum(p.numel() for p in backbone.parameters())
-        logger.info('Backbone total parameters: {}'.format(backbone_total_params))
+        # logger.info('Backbone total parameters: {}'.format(backbone_total_params))
 
         # build end-to-end METRO network (CNN backbone + multi-layer transformer encoder)
         _bstro_network = BSTRO_Network(args, config, backbone, trans_encoder, mesh_sampler)
@@ -754,11 +754,11 @@ def main(args):
 
         if args.resume_checkpoint!=None and args.resume_checkpoint!='None':
             # for fine-tuning or resume training or inference, load weights from checkpoint
-            logger.info("Loading state dict from checkpoint {}".format(args.resume_checkpoint))
+            # logger.info("Loading state dict from checkpoint {}".format(args.resume_checkpoint))
             cpu_device = torch.device('cpu')
             state_dict = torch.load(args.resume_checkpoint, map_location=cpu_device)
             if not args.run_eval_only and ('3dpw' in args.resume_checkpoint or 'h36m' in args.resume_checkpoint):
-                logger.info('=> initializing with metro weights from {}'.format(args.resume_checkpoint))
+                # logger.info('=> initializing with metro weights from {}'.format(args.resume_checkpoint))
                 # initializing with METRO pretrained on 3dpw or h36m. Only apply to the backbone.
                 state_dict = {k: v for k, v in state_dict.items() if k != 'trans_encoder.2.cls_head.weight' and \
                                                                     k != 'trans_encoder.2.cls_head.bias' and \
@@ -770,7 +770,7 @@ def main(args):
             del state_dict
     
     _bstro_network.to(args.device)
-    logger.info("Training parameters %s", args)
+    # logger.info("Training parameters %s", args)
 
     if args.run_eval_only==True:
         test_dataloader = make_data_loader(args, args.test_yaml, 

@@ -1,0 +1,4 @@
+name: bstro
+channels:
+  - defaults
+prefix: /home/joelintech/miniconda3/envs/bstro

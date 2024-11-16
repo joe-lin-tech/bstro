@@ -83,9 +83,9 @@ def make_data_loader(args, yaml_file, is_distributed=True,
         images_per_batch = images_per_gpu * get_world_size()
         iters_per_batch = len(dataset) // images_per_batch
         num_iters = iters_per_batch * args.num_train_epochs
-        logger.info("Train with {} images per GPU.".format(images_per_gpu))
-        logger.info("Total batch size {}".format(images_per_batch))
-        logger.info("Total training steps {}".format(num_iters))
+        # logger.info("Train with {} images per GPU.".format(images_per_gpu))
+        # logger.info("Total batch size {}".format(images_per_batch))
+        # logger.info("Total training steps {}".format(num_iters))
     else:
         shuffle = False
         images_per_gpu = args.per_gpu_eval_batch_size

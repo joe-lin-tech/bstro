@@ -40,6 +40,7 @@ predictions
 demo
 EMDB2
 SLOPER4D
+wild
 
 # hidden folder for aml configs
 .azureml
